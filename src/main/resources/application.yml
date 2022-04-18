@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      database: test
+      uri: mongodb://onego:test123@onegodev.ddns.net:2727/test?authSource=admin&readPreference=primary&directConnection=true&ssl=false
+
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#    generate-ddl: true
+
+#logging:
+#  level:
+#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
