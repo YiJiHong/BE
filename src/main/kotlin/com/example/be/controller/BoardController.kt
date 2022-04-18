@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController
 class BoardController {
 
     fun getBoard(userId: Long): String {
-        return "ok";
+        return "ok!";
     }
 }
