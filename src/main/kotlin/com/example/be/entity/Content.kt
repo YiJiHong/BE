@@ -2,7 +2,7 @@ package com.example.be.entity
 
 import com.example.be.dto.ContentDto
 
-class Content (
+data class Content (
     val no: Int,
     val title: String?,
     val subTitle: String?,
