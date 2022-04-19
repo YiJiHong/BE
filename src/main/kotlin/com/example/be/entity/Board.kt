@@ -4,10 +4,14 @@ import com.example.be.dto.BoardDto
 import com.example.be.dto.ContentDto
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Collections
+import java.util.Date
 
 @Document
-class Board (
+data class Board (
     @Id
     val id: String,
     val userEmail: String,
@@ -15,8 +19,10 @@ class Board (
     val subtitle: String,
     val titleImage: String,
     val likes: Int,
+    @Field("modDatetime")
     val modDateTime: LocalDateTime,
-    val contents: Content
+    val contents: List<Content>,
+    val comments: List<Comment>?
         ){
 
     fun toDataModel(): BoardDto {
@@ -28,13 +34,12 @@ class Board (
             titleImage = titleImage,
             likes = likes,
             modDateTime = modDateTime,
-            contents = ContentDto(
-                id = contents.id,
-                no = contents.no,
-                title = contents.title,
-                subTitle = contents.subTitle,
-                content = contents.content
-            )
+            contents = contents.map {
+                content: Content ->  content.toDataModel()
+            },
+            comments = comments?.map { comment: Comment ->
+                comment.toDataModel()
+            } ?: Collections.emptyList()
         )
     }
 }

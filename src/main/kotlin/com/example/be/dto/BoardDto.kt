@@ -10,6 +10,7 @@ class BoardDto(
     val titleImage: String,
     val likes: Int,
     val modDateTime: LocalDateTime,
-    val contents: ContentDto
+    val contents: List<ContentDto>,
+    val comments: List<CommentDto>
 ) {
 }
