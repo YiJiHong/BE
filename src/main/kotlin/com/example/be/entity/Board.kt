@@ -1,5 +1,7 @@
 package com.example.be.entity
 
+import com.example.be.dto.BoardDto
+import com.example.be.dto.ContentDto
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
@@ -16,15 +18,23 @@ class Board (
     val modDateTime: LocalDateTime,
     val contents: Content
         ){
-}
 
-@Document
-class Content (
-    @Id
-    val id: String,
-    val no: Int,
-    val title: String,
-    val subTitle: String,
-    val content: String
-        ){
+    fun toDataModel(): BoardDto {
+        return BoardDto(
+            id = id,
+            userEmail = userEmail,
+            nickName = nickName,
+            subtitle = subtitle,
+            titleImage = titleImage,
+            likes = likes,
+            modDateTime = modDateTime,
+            contents = ContentDto(
+                id = contents.id,
+                no = contents.no,
+                title = contents.title,
+                subTitle = contents.subTitle,
+                content = contents.content
+            )
+        )
+    }
 }
