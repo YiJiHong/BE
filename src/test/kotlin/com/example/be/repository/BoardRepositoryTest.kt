@@ -26,6 +26,7 @@ class BoardRepositoryTest {
         board.forEach{
             board ->
             println("board = ${board}")
+            println("for explain")
         }
     }
 
