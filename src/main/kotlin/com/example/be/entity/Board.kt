@@ -1,14 +1,11 @@
 package com.example.be.entity
 
 import com.example.be.dto.BoardDto
-import com.example.be.dto.ContentDto
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.Collections
-import java.util.Date
 
 @Document
 data class Board (
@@ -30,7 +27,7 @@ data class Board (
             id = id,
             userEmail = userEmail,
             nickName = nickName,
-            subtitle = subtitle,
+            subTitle = subtitle,
             titleImage = titleImage,
             likes = likes,
             modDateTime = modDateTime,

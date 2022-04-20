@@ -1,6 +1,7 @@
 package com.example.be.controller
 
 import com.example.be.dto.BoardDto
+import com.example.be.dto.InsertBoardDto
 import com.example.be.service.BoardService
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -24,24 +26,18 @@ class BoardController(val boardService: BoardService) {
         return ResponseEntity(boardService.getAllBoard(userEmail), HttpStatus.OK)
     }
 
-    @GetMapping("/count")
-    fun getBoardCount() {
-        return TODO();
-    }
-
     @PostMapping
-    fun insertBoard() {
-        return TODO();
+    fun insertBoard(@RequestBody insertBoardDto: InsertBoardDto): ResponseEntity<Boolean> {
+        return ResponseEntity(boardService.insertBoard(insertBoardDto), HttpStatus.OK)
     }
 
     @PutMapping
-    fun updateBoard() {
-        return TODO();
+    fun updateBoard(@RequestBody insertBoardDto: InsertBoardDto): ResponseEntity<Boolean> {
+        return ResponseEntity(boardService.insertBoard(insertBoardDto), HttpStatus.OK)
     }
 
-    @DeleteMapping
-    fun deleteBoard() {
-        return TODO();
+    @DeleteMapping("/{boardId}")
+    fun deleteBoard(@PathVariable boardId: String): ResponseEntity<Boolean> {
+        return ResponseEntity(boardService.deleteBoard(boardId), HttpStatus.OK)
     }
-
 }
