@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -22,8 +23,13 @@ import org.springframework.web.bind.annotation.RestController
 class BoardController(val boardService: BoardService) {
 
     @GetMapping("/{userEmail}")
-    fun getBoard(@PathVariable userEmail: String): ResponseEntity<Page<BoardDto>> {
+    fun getAllBoard(@PathVariable userEmail: String): ResponseEntity<Page<BoardDto>> {
         return ResponseEntity(boardService.getAllBoard(userEmail), HttpStatus.OK)
+    }
+
+    @GetMapping()
+    fun getBoard(@RequestParam boardId: String): ResponseEntity<BoardDto> {
+        return ResponseEntity(boardService.getBoard(boardId), HttpStatus.OK)
     }
 
     @PostMapping
@@ -38,6 +44,12 @@ class BoardController(val boardService: BoardService) {
 
     @DeleteMapping("/{boardId}")
     fun deleteBoard(@PathVariable boardId: String): ResponseEntity<Boolean> {
-        return ResponseEntity(boardService.deleteBoard(boardId), HttpStatus.OK)
+        val deleteBoard = boardService.deleteBoard(boardId)
+
+        return if (deleteBoard) {
+            ResponseEntity(deleteBoard, HttpStatus.OK)
+        }else {
+            ResponseEntity(deleteBoard, HttpStatus.NOT_FOUND)
+        }
     }
 }

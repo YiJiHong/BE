@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page
 
 interface BoardService {
     fun getAllBoard(userEmail: String): Page<BoardDto>
+    fun getBoard(boardId: String): BoardDto
     fun deleteBoard(boardId: String): Boolean
     fun insertBoard(insertBoardDto: InsertBoardDto): Boolean
 }

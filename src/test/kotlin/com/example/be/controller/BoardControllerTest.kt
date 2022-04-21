@@ -5,6 +5,7 @@ import com.example.be.dto.BoardDto
 import com.example.be.dto.CommentDto
 import com.example.be.dto.ContentDto
 import com.example.be.dto.InsertBoardDto
+import com.example.be.exception.NoneBoardException
 import com.example.be.service.BoardService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
@@ -85,6 +86,48 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
         }
+
+        @Test
+        @DisplayName("uri에 boardId가 path로 들어오는 경우, BoardId에 대응되는 boardDto와 상태 200을 반환한다.")
+        fun test01() {
+            // given
+            val boardId = boardDto.id
+            val inputUri = "/board"
+
+            // when
+            Mockito.`when`(service.getBoard(Mockito.anyString())).thenReturn(boardDto)
+            val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(inputUri)
+                    .param("boardId", boardId)
+            )
+
+            // then
+            resultActions
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+        }
+
+        @Test
+        @DisplayName("uri에 boardId가 path로 들어오는 경우, BoardId에 대응되는 board가 없다면 404을 반환한다.")
+        fun test02() {
+            // given
+            val boardId = boardDto.id
+            val inputUri = "/board"
+
+            // when
+            Mockito.`when`(service.getBoard(Mockito.anyString())).thenThrow(NoneBoardException("test message", boardDto))
+            val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(inputUri)
+                    .param("boardId", boardId)
+            )
+
+            // then
+            resultActions
+                .andExpect(MockMvcResultMatchers.status().isNotFound)
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+        }
     }
 
     @Nested
@@ -117,6 +160,39 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
             // then
             resultActions
                 .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+        }
+
+        @Test
+        @DisplayName("http의 body를 통해 잘못된 insertBoardDto를 받는 경우, HttpMessageNotReadableException과 BAD_REQUEST(400)를 반환한다.")
+        fun test01() {
+            // given
+            val inputUri = "/board"
+            val inputWithoutUserEmail = "{ " +
+                "\"id\" : \"1234\"," +
+                "\"nickName\" : \"test\"," +
+                "\"subtitle\" : \"test\"," +
+                "\"titleImage\" : \"test\"," +
+                "\"modDateTime\" : \"2022-04-11T12:00:00\"," +
+                "\"content\" : { "+
+                    "\"no\" : \"0\"," +
+                    "\"title\" : \"test\"," +
+                    "\"subTitle\" : \"test\"," +
+                    "\"content\" : \"test\"" +
+                "}" +
+            "}"
+
+            // when
+            val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(inputUri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(inputWithoutUserEmail)
+            )
+
+            // then
+            resultActions
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
         }
@@ -177,6 +253,26 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
             // then
             resultActions
                 .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+        }
+
+        @Test
+        @DisplayName("uri에 boardId가 path로 들어오는 경우, userEmail에 대응되는 board를 삭제가 실패하면 false와 상태 404을 반환한다.")
+        fun test01() {
+            // given
+            val boardId = "boardId"
+            val inputUri = "/board/${boardId}"
+
+            // when
+            Mockito.`when`(service.deleteBoard(Mockito.anyString())).thenReturn(false)
+            val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(inputUri)
+            )
+
+            // then
+            resultActions
+                .andExpect(MockMvcResultMatchers.status().isNotFound)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
         }

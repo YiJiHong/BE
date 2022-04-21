@@ -2,7 +2,7 @@ package com.example.be.dto
 
 import java.time.LocalDateTime
 
-class CommentDto(
+data class CommentDto(
     val id: String,
     val userId: String,
     val nickName: String,

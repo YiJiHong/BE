@@ -2,7 +2,7 @@ package com.example.be.dto
 
 import java.time.LocalDateTime
 
-class InsertBoardDto(
+data class InsertBoardDto(
     val id: String,
     val userEmail: String,
     val nickName: String,

@@ -1,6 +1,6 @@
 package com.example.be.dto
 
-class ContentDto(
+data class ContentDto(
     val no: Int,
     val title: String?,
     val subTitle: String?,
