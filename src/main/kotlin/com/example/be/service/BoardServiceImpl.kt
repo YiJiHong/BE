@@ -17,6 +17,10 @@ class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
         TODO("Not yet implemented")
     }
 
+    override fun getBoard(boardId: String): BoardDto {
+        TODO("Not yet implemented")
+    }
+
     override fun deleteBoard(boardId: String): Boolean {
         TODO("Not yet implemented")
     }
