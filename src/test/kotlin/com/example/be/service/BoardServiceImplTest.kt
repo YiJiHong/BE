@@ -103,4 +103,39 @@ internal class BoardServiceImplTest {
         }
     }
 
+    @Nested
+    @DisplayName("deleteBoard Test")
+    inner class TestDeleteBoard {
+
+        @Test
+        @DisplayName("DB에 boardId에 대응되는 board가 있다면, board를 DB에서 삭제하고 true를 반환한다.")
+        fun test00() {
+            // given
+            val boardId = Fixture.boardDto.id
+
+            // when
+            Mockito.`when`(repository.deleteBoardById(Mockito.anyString())).thenReturn(1)
+
+            // then
+            val deleteBoard: Boolean = service.deleteBoard(boardId)
+            assertSame(true, deleteBoard)
+        }
+
+        @Test
+        @DisplayName("DB에 boardId에 대응되는 board가 없다면, NoneBoardException을 던진다.")
+        fun test01() {
+            // given
+            val boardId = "Fail"
+
+            // when
+            Mockito.`when`(repository.deleteBoardById(Mockito.anyString())).thenReturn(0)
+
+            // then
+            val exception: NoneBoardException =
+                assertThrows(NoneBoardException::class.java) { service.deleteBoard(boardId) }
+            println(exception.msg)
+        }
+    }
+
+
 }

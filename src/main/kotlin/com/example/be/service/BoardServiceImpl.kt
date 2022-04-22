@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional
 @RequiredArgsConstructor
 class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
 
+    private final val SUCCESS = 1L
+
     @Transactional(readOnly = true)
     override fun getAllBoard(pageable: Pageable, userEmail: String): Page<BoardDto> {
         return boardRepository.findAllByUserEmail(pageable = pageable, userEmail = userEmail)
@@ -29,7 +31,11 @@ class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
     }
 
     override fun deleteBoard(boardId: String): Boolean {
-        TODO("Not yet implemented")
+        if (boardRepository.deleteBoardById(boardId) == SUCCESS) {
+            return true
+        } else {
+            throw NoneBoardException("Not Exists Board. BoardId = ${boardId}")
+        }
     }
 
     override fun insertBoard(insertBoardDto: InsertBoardDto): Boolean {
