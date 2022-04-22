@@ -88,7 +88,7 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
             val inputUri = "/board"
 
             // when
-            Mockito.`when`(service.getBoard(Mockito.anyString())).thenThrow(NoneBoardException("test message", Fixture.boardDto))
+            Mockito.`when`(service.getBoard(Mockito.anyString())).thenThrow(NoneBoardException("test message"))
             val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(inputUri)
                     .param("boardId", boardId)
