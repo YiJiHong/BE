@@ -13,7 +13,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NoneBoardException::class)
     fun handleInvalidDtoException(e: NoneBoardException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity(ErrorResponse(msg = e.board.toString()), HttpStatus.NOT_FOUND)
+        return ResponseEntity(ErrorResponse(msg = e.msg), HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)

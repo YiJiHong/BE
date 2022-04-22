@@ -76,8 +76,24 @@ class BoardRepositoryTest {
     }
 
     @Test
-    @DisplayName("delete test")
+    @DisplayName("findBoardByBoardId Success")
     fun test02() {
+        val board: Board? = boardRepository.findBoardById("611b6c3d6aca4153356738e2")
+
+        println("board.toString() = ${board.toString()}")
+    }
+
+    @Test
+    @DisplayName("findBoardByBoardId Fail")
+    fun test03() {
+        val board: Board? = boardRepository.findBoardById("hi")
+
+        println("board.toString() = ${board.toString()}")
+    }
+
+    @Test
+    @DisplayName("delete test")
+    fun test04() {
         boardRepository.deleteById("-1");
 
 

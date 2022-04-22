@@ -5,6 +5,8 @@ import com.example.be.dto.InsertBoardDto
 import com.example.be.service.BoardService
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -23,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController
 class BoardController(val boardService: BoardService) {
 
     @GetMapping("/{userEmail}")
-    fun getAllBoard(@PathVariable userEmail: String): ResponseEntity<Page<BoardDto>> {
-        return ResponseEntity(boardService.getAllBoard(userEmail), HttpStatus.OK)
+    fun getAllBoard(@PathVariable userEmail: String, @PageableDefault pageable: Pageable): ResponseEntity<Page<BoardDto>> {
+        return ResponseEntity(boardService.getAllBoard(pageable, userEmail), HttpStatus.OK)
     }
 
     @GetMapping()

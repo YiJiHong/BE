@@ -1,9 +1,7 @@
 package com.example.be.controller
 
+import com.example.be.Fixture
 import com.example.be.SpringMockMvcTestSupport
-import com.example.be.dto.BoardDto
-import com.example.be.dto.CommentDto
-import com.example.be.dto.ContentDto
 import com.example.be.dto.InsertBoardDto
 import com.example.be.exception.NoneBoardException
 import com.example.be.service.BoardService
@@ -22,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.LocalDateTime
-import java.util.Collections
 
 @WebMvcTest(controllers = [BoardController::class])
 internal class BoardControllerTest : SpringMockMvcTestSupport() {
@@ -33,32 +30,7 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
     @MockBean
     private lateinit var service: BoardService
 
-    private val contentDto = ContentDto(
-        no = 0,
-        title = "testTitle",
-        subTitle = "testSubTitle",
-        content = "testContent"
-    )
 
-    private val commentDto = CommentDto(
-        id = "testId",
-        userId = "testId",
-        nickName = "testNickName",
-        comment = "testComment",
-        modDateTime = LocalDateTime.now()
-    )
-
-    private val boardDto = BoardDto(
-        id = "test",
-        userEmail = "testEmail",
-        nickName = "test",
-        subTitle = "testTitle",
-        titleImage = "testImage",
-        likes = 0,
-        modDateTime = LocalDateTime.now(),
-        contents = Collections.singletonList(contentDto),
-        comments = Collections.singletonList(commentDto)
-    )
 
     @Nested
     @DisplayName("Get 방식으로 통신할 때")
@@ -68,14 +40,14 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
         @DisplayName("uri에 userEmail이 path로 들어오는 경우, userEmail에 대응되는 board들을 감싼 page와 상태 200을 반환한다.")
         fun test00() {
             // given
-            val userEmail = boardDto.userEmail
+            val userEmail = Fixture.boardDto.userEmail
             val inputUri = "/board/${userEmail}"
 
 
-            val pageImpl = PageImpl(listOf(boardDto))
+            val pageImpl = PageImpl(listOf(Fixture.boardDto))
 
             // when
-            Mockito.`when`(service.getAllBoard(Mockito.anyString())).thenReturn(pageImpl)
+            Mockito.`when`(service.getAllBoard(any(), Mockito.anyString())).thenReturn(pageImpl)
             val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(inputUri)
             )
@@ -91,11 +63,11 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
         @DisplayName("uri에 boardId가 path로 들어오는 경우, BoardId에 대응되는 boardDto와 상태 200을 반환한다.")
         fun test01() {
             // given
-            val boardId = boardDto.id
+            val boardId = Fixture.boardDto.id
             val inputUri = "/board"
 
             // when
-            Mockito.`when`(service.getBoard(Mockito.anyString())).thenReturn(boardDto)
+            Mockito.`when`(service.getBoard(Mockito.anyString())).thenReturn(Fixture.boardDto)
             val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(inputUri)
                     .param("boardId", boardId)
@@ -112,11 +84,11 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
         @DisplayName("uri에 boardId가 path로 들어오는 경우, BoardId에 대응되는 board가 없다면 404을 반환한다.")
         fun test02() {
             // given
-            val boardId = boardDto.id
+            val boardId = Fixture.boardDto.id
             val inputUri = "/board"
 
             // when
-            Mockito.`when`(service.getBoard(Mockito.anyString())).thenThrow(NoneBoardException("test message", boardDto))
+            Mockito.`when`(service.getBoard(Mockito.anyString())).thenThrow(NoneBoardException("test message"))
             val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(inputUri)
                     .param("boardId", boardId)
@@ -140,13 +112,13 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
             // given
             val inputUri = "/board"
             val insertBoardDto = InsertBoardDto(
-                id = boardDto.id,
-                userEmail = boardDto.userEmail,
-                nickName = boardDto.nickName,
-                subtitle = boardDto.subTitle,
-                titleImage = boardDto.titleImage,
+                id = Fixture.boardDto.id,
+                userEmail = Fixture.boardDto.userEmail,
+                nickName = Fixture.boardDto.nickName,
+                subtitle = Fixture.boardDto.subTitle,
+                titleImage = Fixture.boardDto.titleImage,
                 modDateTime = LocalDateTime.now(),
-                content = contentDto
+                content = Fixture.contentDto
             )
 
             // when
@@ -208,13 +180,13 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
             // given
             val inputUri = "/board"
             val insertBoardDto = InsertBoardDto(
-                id = boardDto.id,
-                userEmail = boardDto.userEmail,
-                nickName = boardDto.nickName,
-                subtitle = boardDto.subTitle,
-                titleImage = boardDto.titleImage,
+                id = Fixture.boardDto.id,
+                userEmail = Fixture.boardDto.userEmail,
+                nickName = Fixture.boardDto.nickName,
+                subtitle = Fixture.boardDto.subTitle,
+                titleImage = Fixture.boardDto.titleImage,
                 modDateTime = LocalDateTime.now(),
-                content = contentDto
+                content = Fixture.contentDto
             )
 
             // when
