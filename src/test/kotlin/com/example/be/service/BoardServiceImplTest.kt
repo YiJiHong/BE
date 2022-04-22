@@ -3,6 +3,7 @@ package com.example.be.service
 import com.example.be.Fixture
 import com.example.be.dto.BoardDto
 import com.example.be.entity.Board
+import com.example.be.exception.NoneBoardException
 import com.example.be.repository.BoardRepository
 import com.nhaarman.mockitokotlin2.any
 import org.junit.jupiter.api.Assertions.*
@@ -65,6 +66,40 @@ internal class BoardServiceImplTest {
             // then
             val boardDtoPage: Page<BoardDto> = service.getAllBoard(pageRequest, userEmail)
             assertTrue(boardDtoPage.isEmpty)
+        }
+    }
+
+    @Nested
+    @DisplayName("getBoard Test")
+    inner class TestGetBoard {
+
+        @Test
+        @DisplayName("DB에 boardId에 대응되는 board가 있다면, board를 BoardDto로 반환한다.")
+        fun test00() {
+            // given
+            val boardId = Fixture.boardDto.id
+
+            // when
+            Mockito.`when`(repository.findBoardById(Mockito.anyString())).thenReturn(Fixture.board)
+
+            // then
+            val boardDto: BoardDto = service.getBoard(boardId)
+            assertSame(boardId, boardDto.id)
+        }
+
+        @Test
+        @DisplayName("DB에 boardId에 대응되는 board가 없다면, NoneBoardException을 던진다.")
+        fun test01() {
+            // given
+            val boardId = "Fail"
+
+            // when
+            Mockito.`when`(repository.findBoardById(Mockito.anyString())).thenReturn(null)
+
+            // then
+            val exception: NoneBoardException =
+                assertThrows(NoneBoardException::class.java) { service.getBoard(boardId) }
+            println(exception.msg)
         }
     }
 
