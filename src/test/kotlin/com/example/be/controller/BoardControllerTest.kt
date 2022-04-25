@@ -113,15 +113,7 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
         fun test00() {
             // given
             val inputUri = "/board"
-            val insertBoardDto = InsertBoardDto(
-                id = Fixture.boardDto.id,
-                userEmail = Fixture.boardDto.userEmail,
-                nickName = Fixture.boardDto.nickName,
-                subTitle = Fixture.boardDto.subTitle,
-                titleImage = Fixture.boardDto.titleImage,
-                modDateTime = LocalDateTime.now(),
-                contents = Collections.singletonList(Fixture.contentDto)
-            )
+            val insertBoardDto = Fixture.insertBoardDto
 
             // when
             Mockito.`when`(service.insertBoard(any())).thenReturn(true)
@@ -183,16 +175,7 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
         fun test00() {
             // given
             val inputUri = "/board"
-            val updateBoardDto = UpdateBoardDto(
-                id = Fixture.boardDto.id,
-                userEmail = Fixture.boardDto.userEmail,
-                nickName = Fixture.boardDto.nickName,
-                subTitle = Fixture.boardDto.subTitle,
-                titleImage = Fixture.boardDto.titleImage,
-                modDateTime = LocalDateTime.now(),
-                contents = Collections.singletonList(Fixture.contentDto),
-                comments = Collections.singletonList(Fixture.commentDto)
-            )
+            val updateBoardDto = Fixture.updateBoardDto
 
             // when
             Mockito.`when`(service.insertBoard(any())).thenReturn(true)

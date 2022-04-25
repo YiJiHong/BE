@@ -2,6 +2,7 @@ package com.example.be.service
 
 import com.example.be.dto.BoardDto
 import com.example.be.dto.InsertBoardDto
+import com.example.be.dto.UpdateBoardDto
 import com.example.be.entity.Board
 import com.example.be.exception.NoneBoardException
 import com.example.be.repository.BoardRepository
@@ -39,6 +40,11 @@ class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
     }
 
     override fun insertBoard(insertBoardDto: InsertBoardDto): Boolean {
+        val save: Board = boardRepository.save(insertBoardDto.toEntity())
+        return save.id != null
+    }
+
+    override fun updateBoard(updateBoardDto: UpdateBoardDto): Boolean {
         TODO("Not yet implemented")
     }
 

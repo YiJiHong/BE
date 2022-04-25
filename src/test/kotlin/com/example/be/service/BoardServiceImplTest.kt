@@ -137,5 +137,24 @@ internal class BoardServiceImplTest {
         }
     }
 
+    @Nested
+    @DisplayName("insertBoard Test")
+    inner class TestInsertBoard {
+
+        @Test
+        @DisplayName("parameter로 넘어온 insertBoardDto를 Board로 변환한 후, DB에 board를 저장하고 성공하면 true를 반환한다.")
+        fun test00() {
+            // given
+            val boardDto = Fixture.boardDto
+            val boardId = boardDto.id
+
+            // when
+            Mockito.`when`(repository.deleteBoardById(Mockito.anyString())).thenReturn(1)
+
+            // then
+            val deleteBoard: Boolean = service.deleteBoard(boardId)
+            assertSame(true, deleteBoard)
+        }
+    }
 
 }
