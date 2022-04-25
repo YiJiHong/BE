@@ -2,6 +2,7 @@ package com.example.be.controller
 
 import com.example.be.dto.BoardDto
 import com.example.be.dto.InsertBoardDto
+import com.example.be.dto.UpdateBoardDto
 import com.example.be.service.BoardService
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
@@ -40,8 +41,8 @@ class BoardController(val boardService: BoardService) {
     }
 
     @PutMapping
-    fun updateBoard(@RequestBody insertBoardDto: InsertBoardDto): ResponseEntity<Boolean> {
-        return ResponseEntity(boardService.insertBoard(insertBoardDto), HttpStatus.OK)
+    fun updateBoard(@RequestBody updateBoardDto: UpdateBoardDto): ResponseEntity<Boolean> {
+        return ResponseEntity(boardService.updateBoard(updateBoardDto), HttpStatus.OK)
     }
 
     @DeleteMapping("/{boardId}")

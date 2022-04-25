@@ -9,4 +9,5 @@ interface BoardRepository: MongoRepository<Board, String> {
 
     fun findAllByUserEmail(pageable: Pageable, userEmail: String): Page<Board>
     fun findBoardById(boardId: String): Board?
+    fun deleteBoardById(boardId: String): Long
 }

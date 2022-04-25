@@ -94,9 +94,9 @@ class BoardRepositoryTest {
     @Test
     @DisplayName("delete test")
     fun test04() {
-        boardRepository.deleteById("-1");
-
-
+        boardRepository.deleteById("-1")
+        val deleteBoardById = boardRepository.deleteBoardById("611ccc3b89580f5ced0b3f99")
+        println("deleteBoardById = ${deleteBoardById}") // success -> 1, fail -> 0
     }
 
 

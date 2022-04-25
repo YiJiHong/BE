@@ -7,14 +7,15 @@ import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDateTime
 import java.util.Collections
 
-@Document
+@Document(collection = "auto_sequence")
 data class Board (
     @Id
-    val id: String,
+    val id: String?,
     val userEmail: String,
     val nickName: String,
-    val subtitle: String,
-    val titleImage: String,
+    @Field("subtitle")
+    val subTitle: String,
+    val titleImage: String?,
     val likes: Int,
     @Field("modDatetime")
     val modDateTime: LocalDateTime,
@@ -24,10 +25,10 @@ data class Board (
 
     fun toDataModel(): BoardDto {
         return BoardDto(
-            id = id,
+            id = id ?: "-1",
             userEmail = userEmail,
             nickName = nickName,
-            subTitle = subtitle,
+            subTitle = subTitle,
             titleImage = titleImage,
             likes = likes,
             modDateTime = modDateTime,

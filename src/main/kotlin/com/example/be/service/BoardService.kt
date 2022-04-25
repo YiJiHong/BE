@@ -2,6 +2,7 @@ package com.example.be.service
 
 import com.example.be.dto.BoardDto
 import com.example.be.dto.InsertBoardDto
+import com.example.be.dto.UpdateBoardDto
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -10,4 +11,5 @@ interface BoardService {
     fun getBoard(boardId: String): BoardDto
     fun deleteBoard(boardId: String): Boolean
     fun insertBoard(insertBoardDto: InsertBoardDto): Boolean
+    fun updateBoard(updateBoardDto: UpdateBoardDto): Boolean
 }

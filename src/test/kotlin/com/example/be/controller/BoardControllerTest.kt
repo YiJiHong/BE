@@ -3,6 +3,7 @@ package com.example.be.controller
 import com.example.be.Fixture
 import com.example.be.SpringMockMvcTestSupport
 import com.example.be.dto.InsertBoardDto
+import com.example.be.dto.UpdateBoardDto
 import com.example.be.exception.NoneBoardException
 import com.example.be.service.BoardService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.LocalDateTime
+import java.util.*
 
 @WebMvcTest(controllers = [BoardController::class])
 internal class BoardControllerTest : SpringMockMvcTestSupport() {
@@ -111,15 +113,7 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
         fun test00() {
             // given
             val inputUri = "/board"
-            val insertBoardDto = InsertBoardDto(
-                id = Fixture.boardDto.id,
-                userEmail = Fixture.boardDto.userEmail,
-                nickName = Fixture.boardDto.nickName,
-                subtitle = Fixture.boardDto.subTitle,
-                titleImage = Fixture.boardDto.titleImage,
-                modDateTime = LocalDateTime.now(),
-                content = Fixture.contentDto
-            )
+            val insertBoardDto = Fixture.insertBoardDto
 
             // when
             Mockito.`when`(service.insertBoard(any())).thenReturn(true)
@@ -142,18 +136,20 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
             // given
             val inputUri = "/board"
             val inputWithoutUserEmail = "{ " +
-                "\"id\" : \"1234\"," +
-                "\"nickName\" : \"test\"," +
-                "\"subtitle\" : \"test\"," +
-                "\"titleImage\" : \"test\"," +
-                "\"modDateTime\" : \"2022-04-11T12:00:00\"," +
-                "\"content\" : { "+
-                    "\"no\" : \"0\"," +
-                    "\"title\" : \"test\"," +
+                    "\"id\" : \"1234\"," +
+                    "\"nickName\" : \"test\"," +
                     "\"subTitle\" : \"test\"," +
-                    "\"content\" : \"test\"" +
-                "}" +
-            "}"
+                    "\"titleImage\" : \"test\"," +
+                    "\"modDateTime\" : \"2022-04-11T12:00:00\"," +
+                    "\"contents\" : [" +
+                        "{ "+
+                            "\"no\" : \"0\"," +
+                            "\"title\" : \"test\"," +
+                            "\"subtitle\" : \"test\"," +
+                            "\"content\" : \"test\"" +
+                        "}" +
+                    "]" +
+                "}"
 
             // when
             val resultActions = mockMvc.perform(
@@ -179,27 +175,55 @@ internal class BoardControllerTest : SpringMockMvcTestSupport() {
         fun test00() {
             // given
             val inputUri = "/board"
-            val insertBoardDto = InsertBoardDto(
-                id = Fixture.boardDto.id,
-                userEmail = Fixture.boardDto.userEmail,
-                nickName = Fixture.boardDto.nickName,
-                subtitle = Fixture.boardDto.subTitle,
-                titleImage = Fixture.boardDto.titleImage,
-                modDateTime = LocalDateTime.now(),
-                content = Fixture.contentDto
-            )
+            val updateBoardDto = Fixture.updateBoardDto
 
             // when
             Mockito.`when`(service.insertBoard(any())).thenReturn(true)
             val resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put(inputUri)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsBytes(insertBoardDto))
+                    .content(objectMapper.writeValueAsBytes(updateBoardDto))
             )
 
             // then
             resultActions
                 .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+        }
+
+        @Test
+        @DisplayName("http의 body를 통해 잘못된 updateBoardDto를 받는 경우, HttpMessageNotReadableException과 BAD_REQUEST(400)를 반환한다.")
+        fun test01() {
+            // given
+            val inputUri = "/board"
+            val inputWithoutComments = "{ " +
+                        "\"id\" : \"1234\"," +
+                        "\"userEmail\" : \"1234\"," +
+                        "\"nickName\" : \"test\"," +
+                        "\"subTitle\" : \"test\"," +
+                        "\"titleImage\" : \"test\"," +
+                        "\"modDateTime\" : \"2022-04-11T12:00:00\"," +
+                        "\"contents\" : [" +
+                            "{ "+
+                                "\"no\" : \"0\"," +
+                                "\"title\" : \"test\"," +
+                                "\"subtitle\" : \"test\"," +
+                                "\"content\" : \"test\"" +
+                            "}" +
+                        "]" +
+                    "}"
+
+            // when
+            val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.put(inputUri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(inputWithoutComments)
+            )
+
+            // then
+            resultActions
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
         }
