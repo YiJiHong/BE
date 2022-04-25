@@ -26,11 +26,13 @@ class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
             }
     }
 
+    @Transactional(readOnly = true)
     override fun getBoard(boardId: String): BoardDto {
         return boardRepository.findBoardById(boardId)?.toDataModel()
             ?: throw NoneBoardException("Not Exists Board. BoardId = ${boardId}")
     }
 
+    @Transactional
     override fun deleteBoard(boardId: String): Boolean {
         if (boardRepository.deleteBoardById(boardId) == SUCCESS) {
             return true
@@ -39,11 +41,13 @@ class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
         }
     }
 
+    @Transactional
     override fun insertBoard(insertBoardDto: InsertBoardDto): Boolean {
         val save: Board = boardRepository.save(insertBoardDto.toEntity())
         return save.id != null
     }
 
+    @Transactional
     override fun updateBoard(updateBoardDto: UpdateBoardDto): Boolean {
         val board = (boardRepository.findBoardById(updateBoardDto.id)
             ?: throw NoneBoardException("Not Exists Board. BoardId = ${updateBoardDto.id}"))
@@ -63,5 +67,4 @@ class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
         val save = boardRepository.save(newBoard)
         return save.id != null
     }
-
 }
