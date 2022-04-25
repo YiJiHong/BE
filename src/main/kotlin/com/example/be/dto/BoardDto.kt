@@ -7,7 +7,7 @@ data class BoardDto(
     val userEmail: String,
     val nickName: String,
     val subTitle: String,
-    val titleImage: String,
+    val titleImage: String?,
     val likes: Int,
     val modDateTime: LocalDateTime,
     val contents: List<ContentDto>,

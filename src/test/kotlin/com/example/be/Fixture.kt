@@ -1,8 +1,6 @@
 package com.example.be
 
-import com.example.be.dto.BoardDto
-import com.example.be.dto.CommentDto
-import com.example.be.dto.ContentDto
+import com.example.be.dto.*
 import com.example.be.entity.Board
 import com.example.be.entity.Comment
 import com.example.be.entity.Content
@@ -58,12 +56,32 @@ class Fixture {
             id = "test",
             userEmail = "testEmail",
             nickName = "test",
-            subtitle = "testTitle",
+            subTitle = "testTitle",
             titleImage = "testImage",
             likes = 0,
             modDateTime = LocalDateTime.now(),
             contents = Collections.singletonList(content),
             comments = Collections.singletonList(comment)
+        )
+
+        val insertBoardDto = InsertBoardDto(
+            userEmail = "testEmail",
+            nickName = "test",
+            subTitle = "testTitle",
+            titleImage = "testImage",
+            modDateTime = LocalDateTime.now(),
+            contents = Collections.singletonList(contentDto)
+        )
+
+        val updateBoardDto = UpdateBoardDto(
+            id = "testId",
+            userEmail = "testEmail",
+            nickName = "test",
+            subTitle = "testTitle",
+            titleImage = "testImage",
+            modDateTime = LocalDateTime.now(),
+            contents = Collections.singletonList(contentDto),
+            comments = Collections.singletonList(commentDto)
         )
     }
 }
