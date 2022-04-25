@@ -45,7 +45,23 @@ class BoardServiceImpl(val boardRepository: BoardRepository) : BoardService {
     }
 
     override fun updateBoard(updateBoardDto: UpdateBoardDto): Boolean {
-        TODO("Not yet implemented")
+        val board = (boardRepository.findBoardById(updateBoardDto.id)
+            ?: throw NoneBoardException("Not Exists Board. BoardId = ${updateBoardDto.id}"))
+
+        val newBoard = Board(
+            id = updateBoardDto.id,
+            userEmail = board.userEmail,
+            nickName = board.nickName,
+            subTitle = updateBoardDto.subTitle,
+            titleImage = updateBoardDto.titleImage,
+            likes = board.likes,
+            modDateTime = updateBoardDto.modDateTime,
+            contents = updateBoardDto.contents.map { contentDto -> contentDto.toEntity() },
+            comments = updateBoardDto.comments.map { commentDto -> commentDto.toEntity() }
+        )
+
+        val save = boardRepository.save(newBoard)
+        return save.id != null
     }
 
 }

@@ -75,8 +75,6 @@ class Fixture {
 
         val updateBoardDto = UpdateBoardDto(
             id = "testId",
-            userEmail = "testEmail",
-            nickName = "test",
             subTitle = "testTitle",
             titleImage = "testImage",
             modDateTime = LocalDateTime.now(),

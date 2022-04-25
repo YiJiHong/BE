@@ -145,16 +145,73 @@ internal class BoardServiceImplTest {
         @DisplayName("parameter로 넘어온 insertBoardDto를 Board로 변환한 후, DB에 board를 저장하고 성공하면 true를 반환한다.")
         fun test00() {
             // given
-            val boardDto = Fixture.boardDto
-            val boardId = boardDto.id
+            val insertBoardDto = Fixture.insertBoardDto
+            val boardEntity = Board(
+                id = "testId",
+                userEmail = insertBoardDto.userEmail,
+                nickName = insertBoardDto.nickName,
+                subTitle = insertBoardDto.subTitle,
+                titleImage = insertBoardDto.titleImage,
+                likes = 0,
+                modDateTime = insertBoardDto.modDateTime,
+                contents = insertBoardDto.contents.map { contentDto -> contentDto.toEntity() },
+                comments = null
+            )
 
             // when
-            Mockito.`when`(repository.deleteBoardById(Mockito.anyString())).thenReturn(1)
+            Mockito.`when`(repository.save(any())).thenReturn(boardEntity)
 
             // then
-            val deleteBoard: Boolean = service.deleteBoard(boardId)
-            assertSame(true, deleteBoard)
+            val saveBoard: Boolean = service.insertBoard(insertBoardDto)
+            assertSame(true, saveBoard)
         }
     }
 
+    @Nested
+    @DisplayName("updateBoard Test")
+    inner class TestUpdateBoard {
+
+        @Test
+        @DisplayName("parameter로 넘어온 updateBoardDto를 Board로 변환한 후, DB에 board를 저장하고 성공하면 true를 반환한다.")
+        fun test00() {
+            // given
+            val updateBoardDto = Fixture.updateBoardDto
+            val searchBoard = Fixture.board
+            val saveBoard = Board(
+                id = updateBoardDto.id,
+                userEmail = searchBoard.userEmail,
+                nickName = searchBoard.nickName,
+                subTitle = updateBoardDto.subTitle,
+                titleImage = updateBoardDto.titleImage,
+                likes = searchBoard.likes,
+                modDateTime = updateBoardDto.modDateTime,
+                contents = updateBoardDto.contents.map { contentDto -> contentDto.toEntity() },
+                comments = updateBoardDto.comments.map { commentDto -> commentDto.toEntity() }
+            )
+
+            // when
+            Mockito.`when`(repository.findBoardById(Mockito.anyString())).thenReturn(searchBoard)
+            Mockito.`when`(repository.save(any())).thenReturn(saveBoard)
+
+            // then
+            val updateBoard: Boolean = service.updateBoard(updateBoardDto)
+            assertSame(true, updateBoard)
+        }
+
+        @Test
+        @DisplayName("parameter로 넘어온 updateBoardDto의 id에 대응되는 Board가 DB에 존재하지 않으면, NoneBoardException을 던진다.")
+        fun test01() {
+            // given
+            val updateBoardDto = Fixture.updateBoardDto
+
+            // when
+            Mockito.`when`(repository.findBoardById(Mockito.anyString())).thenReturn(null)
+
+            // then
+            val noneBoardException: NoneBoardException = assertThrows(NoneBoardException::class.java) {
+                service.updateBoard(updateBoardDto)
+            }
+            println("noneBoardException = ${noneBoardException}")
+        }
+    }
 }
