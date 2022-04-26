@@ -64,6 +64,18 @@ class Fixture {
             comments = Collections.singletonList(comment)
         )
 
+        val boardWithoutComment = Board(
+            id = "test",
+            userEmail = "testEmail",
+            nickName = "test",
+            subTitle = "testTitle",
+            titleImage = "testImage",
+            likes = 0,
+            modDateTime = LocalDateTime.now(),
+            contents = Collections.singletonList(content),
+            comments = null
+        )
+
         val insertBoardDto = InsertBoardDto(
             userEmail = "testEmail",
             nickName = "test",

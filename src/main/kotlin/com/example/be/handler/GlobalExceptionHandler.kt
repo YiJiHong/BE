@@ -18,7 +18,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity(ErrorResponse(e.message ?: e.toString()), HttpStatus.BAD_REQUEST)
+        return ResponseEntity(ErrorResponse(e.toString()), HttpStatus.BAD_REQUEST)
     }
 
 }

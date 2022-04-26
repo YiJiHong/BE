@@ -53,8 +53,24 @@ internal class BoardServiceImplTest {
         }
 
         @Test
-        @DisplayName("DB에 userEmail에 대응되는 board가 없다면, content가 empty인 Page를 반환한다.")
+        @DisplayName("DB에 userEmail에 대응되는 board에서 comments가 null인 경우 board의 comments는 empty Collection로 반환한다.")
         fun test01() {
+            // given
+            val pageRequest = PageRequest.of(0, 10)
+            val userEmail = Fixture.boardDto.userEmail
+            val list: PageImpl<Board> = PageImpl(listOf(Fixture.boardWithoutComment))
+
+            // when
+            Mockito.`when`(repository.findAllByUserEmail(any(), Mockito.anyString())).thenReturn(list)
+
+            // then
+            val boardDtoPage: Page<BoardDto> = service.getAllBoard(pageRequest, userEmail)
+            assertTrue(boardDtoPage.content[0].comments.isEmpty())
+        }
+
+        @Test
+        @DisplayName("DB에 userEmail에 대응되는 board가 없다면, content가 empty인 Page를 반환한다.")
+        fun test02() {
             // given
             val pageRequest = PageRequest.of(0, 10)
             val userEmail = "Error"
