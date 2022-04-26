@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDateTime
 import java.util.Collections
 
-@Document(collection = "auto_sequence")
+@Document()
 data class Board (
     @Id
     val id: String?,

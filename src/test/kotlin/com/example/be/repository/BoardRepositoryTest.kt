@@ -1,8 +1,6 @@
 package com.example.be.repository
 
-import com.example.be.dto.BoardDto
-import com.example.be.dto.CommentDto
-import com.example.be.dto.ContentDto
+import com.example.be.Fixture
 import com.example.be.entity.Board
 import com.example.be.entity.Comment
 import com.example.be.entity.Content
@@ -13,57 +11,30 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDateTime
 import java.util.*
 
 @ExtendWith(SpringExtension::class)
 @DataMongoTest
+@ActiveProfiles("test")
 class BoardRepositoryTest {
 
     @Autowired
     lateinit var boardRepository: BoardRepository
 
-    private val contentDto = ContentDto(
-        no = 0,
-        title = "testTitle",
-        subTitle = "testSubTitle",
-        content = "testContent"
-    )
-
-    private val commentDto = CommentDto(
-        id = "testId",
-        userId = "testId",
-        nickName = "testNickName",
-        comment = "testComment",
-        modDateTime = LocalDateTime.now()
-    )
-
-    private val boardDto = BoardDto(
-        id = "test",
-        userEmail = "testEmail",
-        nickName = "test",
-        subTitle = "testTitle",
-        titleImage = "testImage",
-        likes = 0,
-        modDateTime = LocalDateTime.now(),
-        contents = Collections.singletonList(contentDto),
-        comments = Collections.singletonList(commentDto)
-    )
-
     @Test
     fun test00() {
         val pageable = PageRequest.of(0, 10)
-        val board: Page<Board> = boardRepository.findAllByUserEmail(pageable, "nsh_823@naver.com")
+        val saveBoard = saveNullId()
+        val board: Page<Board> = boardRepository.findAllByUserEmail(pageable, saveBoard.userEmail)
 
-        board.forEach{
-            board ->
-            println("board = ${board}")
-            println("for explain")
+        board.content.forEach {
+            Assertions.assertEquals(saveBoard.userEmail, it.userEmail)
         }
+        delete(saveBoard.id!!)
     }
 
     @Test
@@ -78,56 +49,115 @@ class BoardRepositoryTest {
     @Test
     @DisplayName("findBoardByBoardId Success")
     fun test02() {
-        val board: Board? = boardRepository.findBoardById("611b6c3d6aca4153356738e2")
+        val saveBoard = saveNullId()
+        val board: Board? = boardRepository.findBoardById(saveBoard.id!!)
 
-        println("board.toString() = ${board.toString()}")
+        // LocalDateTime type의 경우
+        // ex. 2022-04-26T17:11:12.153230에서
+        // findBoardById로 찾아오면 2022-04-26T17:11:12.153230
+        // save()후 반환 받은 entity에서는 2022-04-26T17:11:12.153로 나타나 값이 조금 다름.
+        org.assertj.core.api.Assertions.assertThat(board).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(saveBoard)
+
+        delete(saveBoard.id!!)
     }
 
     @Test
     @DisplayName("findBoardByBoardId Fail")
     fun test03() {
-        val board: Board? = boardRepository.findBoardById("hi")
+        val board: Board? = boardRepository.findBoardById("None")
 
-        println("board.toString() = ${board.toString()}")
+        Assertions.assertNull(board)
     }
 
     @Test
-    @DisplayName("delete test")
+    @DisplayName("delete test Success - 1L을 반환")
     fun test04() {
-        boardRepository.deleteById("-1")
-        val deleteBoardById = boardRepository.deleteBoardById("611ccc3b89580f5ced0b3f99")
-        println("deleteBoardById = ${deleteBoardById}") // success -> 1, fail -> 0
+        val saveBoard = saveNullId()
+        val deleteBoardById1 = boardRepository.deleteBoardById(saveBoard.id!!)
+
+        Assertions.assertEquals(1L, deleteBoardById1)
+    }
+
+    @Test
+    @DisplayName("delete test Fail - 0L을 반환")
+    fun test05() {
+        val deleteBoardById1 = boardRepository.deleteBoardById("NONE")
+
+        Assertions.assertEquals(0L, deleteBoardById1)
     }
 
 
-    private fun save(): Board {
-        val board = Board(
-            id = boardDto.id,
-            userEmail = boardDto.userEmail,
-            nickName = boardDto.nickName,
-            subtitle = boardDto.subTitle,
-            titleImage = boardDto.titleImage,
-            likes = boardDto.likes,
-            modDateTime = boardDto.modDateTime,
+    @Test
+    @DisplayName("update test")
+    fun test06() {
+        val board = saveNullId()
+
+        val updateNickName = "update"
+
+        val updateBoard = Board(
+            id = board.id,
+            userEmail = board.userEmail,
+            nickName = updateNickName,
+            subTitle = board.subTitle,
+            titleImage = board.titleImage,
+            likes = board.likes,
+            modDateTime = board.modDateTime,
             contents = Collections.singletonList(
                 Content(
-                    no = contentDto.no,
-                    title = contentDto.title,
-                    subTitle = contentDto.subTitle,
-                    content = contentDto.content
+                    no = board.contents[0].no,
+                    title = board.contents[0].title,
+                    subTitle = board.contents[0].subTitle,
+                    content = board.contents[0].content
                 )
             ),
             comments = Collections.singletonList(
                 Comment(
-                    commentDto.id,
-                    commentDto.userId,
-                    commentDto.nickName,
-                    commentDto.comment,
-                    commentDto.modDateTime,
+                    board.comments!![0].id,
+                    board.comments!![0].userId,
+                    board.comments!![0].nickName,
+                    board.comments!![0].comment,
+                    board.comments!![0].modDateTime,
+                )
+            )
+        )
+        val update = boardRepository.save(updateBoard)
+
+        org.assertj.core.api.Assertions.assertThat(update).usingRecursiveComparison().ignoringFields("nickName").isEqualTo(board)
+
+        delete(update.id!!)
+    }
+
+    private fun delete(boardId: String): Long {
+        return boardRepository.deleteBoardById(boardId)
+    }
+
+    private fun saveNullId(): Board {
+        val board = Board(
+            id = null,
+            userEmail = Fixture.boardDto.userEmail,
+            nickName = Fixture.boardDto.nickName,
+            subTitle = Fixture.boardDto.subTitle,
+            titleImage = Fixture.boardDto.titleImage,
+            likes = Fixture.boardDto.likes,
+            modDateTime = Fixture.boardDto.modDateTime,
+            contents = Collections.singletonList(
+                Content(
+                    no = Fixture.contentDto.no,
+                    title = Fixture.contentDto.title,
+                    subTitle = Fixture.contentDto.subTitle,
+                    content = Fixture.contentDto.content
+                )
+            ),
+            comments = Collections.singletonList(
+                Comment(
+                    Fixture.commentDto.id,
+                    Fixture.commentDto.userId,
+                    Fixture.commentDto.nickName,
+                    Fixture.commentDto.comment,
+                    Fixture.commentDto.modDateTime,
                 )
             )
         )
         return boardRepository.save(board)
     }
-
 }
