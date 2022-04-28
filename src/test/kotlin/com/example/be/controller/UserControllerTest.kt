@@ -179,7 +179,58 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
         }
     }
 
+    @Nested
+    @DisplayName("Put 방식으로 요청")
+    inner class PutMappingTest {
 
+        @Nested
+        @DisplayName("endpoint \"/user\"를 통해 요청이 들어온경우")
+        inner class RegisterUserTest {
+            @Test
+            @DisplayName("유저 프로필 업데이트에 성공하면, true와 200을 반환한다.")
+            fun test00() {
+                // given
+                val inputUri: String = "/user"
+                val updateUserDto = Fixture.updateUserDto
+
+                // when
+                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(true)
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.put(inputUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(updateUserDto))
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isOk)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+
+            @Test
+            @DisplayName("유저 프로필 업데이트에 실패하면, false와 500를 반환한다.")
+            fun test01() {
+                // given
+                val inputUri: String = "/user"
+                val updateUserDto = Fixture.updateUserDto
+
+                // when
+                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(false)
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.put(inputUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(updateUserDto))
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isInternalServerError)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+        }
+    }
 
 
 }

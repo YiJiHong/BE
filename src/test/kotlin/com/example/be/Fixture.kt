@@ -112,5 +112,17 @@ class Fixture {
             email = "test@naver.com",
             password = "test123"
         )
+
+        val updateUserDto = UpdateUserDto(
+            name = userDto.name,
+            nickName = userDto.nickName,
+            intro = userDto.intro,
+            profileImage = userDto.profileImage,
+            scraps = userDto.scraps,
+            likes = userDto.likes,
+            followers = userDto.followers,
+            followings = userDto.followings,
+            tags = userDto.tags
+        )
     }
 }

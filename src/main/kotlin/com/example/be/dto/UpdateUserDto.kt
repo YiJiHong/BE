@@ -1,11 +1,9 @@
 package com.example.be.dto
 
-data class UserDto(
-    val id: String,
-    val email: String,
+data class UpdateUserDto(
     val name: String,
     val nickName: String,
-    val intro: String,
+    val intro: String?,
     val profileImage: String?,
     val scraps: List<String>,
     val likes: List<String>,

@@ -12,8 +12,8 @@ class User(
     val name: String,
     @Field("nickname")
     val nickName: String,
-    val intro: String,
-    val profileImage: String,
+    val intro: String?,
+    val profileImage: String?,
     val scraps: List<String>,
     val likes: List<String>,
     val followers: List<String>,
