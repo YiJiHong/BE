@@ -42,7 +42,7 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
                 val inputId = Fixture.userDto.id
 
                 // when
-                Mockito.`when`(userService.getUser(inputId)).thenReturn(Fixture.userDto)
+                Mockito.`when`(userService.getUserProfile(inputId)).thenReturn(Fixture.userDto)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
                         .param("userId", inputId)
@@ -63,7 +63,7 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
                 val inputId = "None"
 
                 // when
-                Mockito.`when`(userService.getUser(inputId)).thenThrow(NoneUserException("No User. id = ${inputId}"))
+                Mockito.`when`(userService.getUserProfile(inputId)).thenThrow(NoneUserException("No User. id = ${inputId}"))
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
                         .param("userId", inputId)
@@ -78,6 +78,56 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
         }
     }
 
+    @Nested
+    @DisplayName("Post 방식으로 요청")
+    inner class PostMappingTest {
+
+        @Nested
+        @DisplayName("endpoint \"/user\"를 통해 body에 email, password를 가지고 요청이 들어온경우")
+        inner class RegisterUserTest {
+            @Test
+            @DisplayName("등록에 성공하면, true와 200을 반환한다.")
+            fun test00() {
+                // given
+                val inputUri: String = "/user"
+
+                // when
+                Mockito.`when`(userService.register(Fixture.userRegisterDto)).thenReturn(true)
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(inputUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(Fixture.userRegisterDto))
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isOk)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+
+            @Test
+            @DisplayName("등록에 실패하면, false와 500를 반환한다.")
+            fun test01() {
+                // given
+                val inputUri = "/user"
+
+                // when
+                Mockito.`when`(userService.register(Fixture.userRegisterDto)).thenReturn(false)
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(inputUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(Fixture.userRegisterDto))
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isInternalServerError)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+        }
+    }
 
 
 }

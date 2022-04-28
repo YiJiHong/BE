@@ -107,5 +107,10 @@ class Fixture {
             followings = Collections.emptyList(),
             tags = Collections.singletonList("여행")
         )
+
+        val userRegisterDto = UserRegisterDto(
+            email = "test@naver.com",
+            password = "test123"
+        )
     }
 }

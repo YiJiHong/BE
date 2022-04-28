@@ -1,7 +1,9 @@
 package com.example.be.service
 
 import com.example.be.dto.UserDto
+import com.example.be.dto.UserRegisterDto
 
 interface UserService {
-    fun getUser(userId: String): UserDto
+    fun getUserProfile(userId: String): UserDto
+    fun register(userRegisterDto: UserRegisterDto): Boolean
 }

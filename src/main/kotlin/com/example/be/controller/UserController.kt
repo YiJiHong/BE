@@ -1,6 +1,7 @@
 package com.example.be.controller
 
 import com.example.be.dto.UserDto
+import com.example.be.dto.UserRegisterDto
 import com.example.be.service.UserService
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
@@ -19,12 +20,16 @@ class UserController (val userService: UserService){
 
     @GetMapping
     fun getUserProfile(@RequestParam userId: String): ResponseEntity<UserDto> {
-        return ResponseEntity(userService.getUser(userId), HttpStatus.OK)
+        return ResponseEntity(userService.getUserProfile(userId), HttpStatus.OK)
     }
 
-    @PostMapping("/register")
-    fun registerUser(@RequestBody ) {
-
+    @PostMapping("")
+    fun registerUser(@RequestBody userRegisterDto: UserRegisterDto): ResponseEntity<Boolean> {
+        return if (userService.register(userRegisterDto)) {
+            ResponseEntity(true, HttpStatus.OK)
+        } else {
+            ResponseEntity(false, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
 }
