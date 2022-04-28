@@ -6,4 +6,5 @@ import com.example.be.dto.UserRegisterDto
 interface UserService {
     fun getUserProfile(userId: String): UserDto
     fun register(userRegisterDto: UserRegisterDto): Boolean
+    fun login(userId: String, password: String): Boolean
 }

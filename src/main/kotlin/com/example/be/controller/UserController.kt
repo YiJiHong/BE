@@ -23,6 +23,15 @@ class UserController (val userService: UserService){
         return ResponseEntity(userService.getUserProfile(userId), HttpStatus.OK)
     }
 
+    @GetMapping("/login")
+    fun login(@RequestParam userId: String, @RequestParam password: String): ResponseEntity<Boolean> {
+        return if (userService.login(userId, password)) {
+            ResponseEntity(true, HttpStatus.OK)
+        } else {
+            ResponseEntity(false, HttpStatus.NOT_FOUND)
+        }
+    }
+
     @PostMapping("")
     fun registerUser(@RequestBody userRegisterDto: UserRegisterDto): ResponseEntity<Boolean> {
         return if (userService.register(userRegisterDto)) {

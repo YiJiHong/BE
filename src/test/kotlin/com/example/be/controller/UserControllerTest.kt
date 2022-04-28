@@ -32,7 +32,7 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
     inner class GetMappingTest {
 
         @Nested
-        @DisplayName("endpoint \"/user\"를 통해 header에 userId의 정보를 가지고 요청이 들어온경우")
+        @DisplayName("endpoint \"/user\"를 통해 header에 userId를 가지고 요청이 들어온경우")
         inner class FindUserTest {
             @Test
             @DisplayName("id에 대응되는 user가 있다면, 대응되는 userDto와 200을 반환한다.")
@@ -67,6 +67,56 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
                         .param("userId", inputId)
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isNotFound)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+        }
+
+        @Nested
+        @DisplayName("endpoint \"/user/login\"를 통해 header에 userId와 password를 가지고 요청이 들어온경우")
+        inner class LoginTest {
+            @Test
+            @DisplayName("id, password에 대응되는 user가 있다면, true와 200을 반환한다.")
+            fun test00() {
+                // given
+                val inputUri: String = "/user/login"
+                val userId = Fixture.userRegisterDto.email
+                val password = Fixture.userRegisterDto.password
+
+                // when
+                Mockito.`when`(userService.login(userId, password)).thenReturn(true)
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.get(inputUri)
+                        .param("userId", userId)
+                        .param("password", password)
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isOk)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+
+            @Test
+            @DisplayName("id, password에 대응되는 user가 없다면, false와 404를 반환한다.")
+            fun test01() {
+                // given
+                val inputUri = "/user/login"
+                val userId = Fixture.userRegisterDto.email
+                val password = "wrong password"
+
+                // when
+                Mockito.`when`(userService.login(userId, password)).thenReturn(false)
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.get(inputUri)
+                        .param("userId", userId)
+                        .param("password", password)
                 )
 
                 // then
@@ -128,6 +178,8 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
             }
         }
     }
+
+
 
 
 }
