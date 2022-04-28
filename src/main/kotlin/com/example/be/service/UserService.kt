@@ -9,4 +9,5 @@ interface UserService {
     fun register(userRegisterDto: UserRegisterDto): Boolean
     fun login(userId: String, password: String): Boolean
     fun updateUserProfile(updateUserDto: UpdateUserDto): Boolean
+    fun deleteUser(userId: String): Boolean
 }
