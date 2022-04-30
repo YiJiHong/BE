@@ -93,5 +93,36 @@ class Fixture {
             contents = Collections.singletonList(contentDto),
             comments = Collections.singletonList(commentDto)
         )
+
+        val userDto = UserDto(
+            id = "testId",
+            email = "testEmail@naver.com",
+            name = "testName",
+            nickName = "test nickName",
+            intro = "test",
+            profileImage = "/src/image",
+            scraps = Collections.emptyList(),
+            likes = Collections.singletonList(boardDto.id),
+            followers = Collections.singletonList("testId2"),
+            followings = Collections.emptyList(),
+            tags = Collections.singletonList("여행")
+        )
+
+        val userRegisterDto = UserRegisterDto(
+            email = "test@naver.com",
+            password = "test123"
+        )
+
+        val updateUserDto = UpdateUserDto(
+            name = userDto.name,
+            nickName = userDto.nickName,
+            intro = userDto.intro,
+            profileImage = userDto.profileImage,
+            scraps = userDto.scraps,
+            likes = userDto.likes,
+            followers = userDto.followers,
+            followings = userDto.followings,
+            tags = userDto.tags
+        )
     }
 }
