@@ -18,7 +18,7 @@ internal class PasswordEncoderTest {
     lateinit var passwordEncoder: PasswordEncoder
 
     @Test
-    @DisplayName("PasswordEncoder를 통해 password를 encode 할 수 있다.")
+    @DisplayName("PasswordEncoder를 통해 rawPassword를 encode하면 rawPassword와는 다른 내용의 encode된 String값을 반환한다.")
     fun test00() {
         // given
         val rawPassword = "testPassword123"
