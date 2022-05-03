@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @WebMvcTest(controllers = [UserController::class])
-internal class UserControllerTest : SpringMockMvcTestSupport() {
+internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -33,7 +33,7 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
 
         @Nested
         @DisplayName("endpoint \"/user\"를 통해 header에 userId를 가지고 요청이 들어온경우")
-        inner class FindUserTest {
+        inner class FindUserRegisterInfoTest {
             @Test
             @DisplayName("id에 대응되는 user가 있다면, 대응되는 userDto와 200을 반환한다.")
             fun test00() {
@@ -134,7 +134,7 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
 
         @Nested
         @DisplayName("endpoint \"/user\"를 통해 body에 email, password를 가지고 요청이 들어온경우")
-        inner class RegisterUserTest {
+        inner class RegisterUserRegisterInfoTest {
             @Test
             @DisplayName("등록에 성공하면, true와 200을 반환한다.")
             fun test00() {
@@ -185,7 +185,7 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
 
         @Nested
         @DisplayName("endpoint \"/user\"를 통해 요청이 들어온경우")
-        inner class RegisterUserTest {
+        inner class RegisterUserRegisterInfoTest {
             @Test
             @DisplayName("유저 프로필 업데이트에 성공하면, true와 200을 반환한다.")
             fun test00() {
@@ -238,7 +238,7 @@ internal class UserControllerTest : SpringMockMvcTestSupport() {
 
         @Nested
         @DisplayName("endpoint \"/user\"를 통해 요청이 들어온경우")
-        inner class RegisterUserTest {
+        inner class RegisterUserRegisterInfoTest {
             @Test
             @DisplayName("유저 삭제에 성공하면, true와 200을 반환한다.")
             fun test00() {

@@ -5,7 +5,7 @@ data class UserDto(
     val email: String,
     val name: String,
     val nickName: String,
-    val intro: String,
+    val intro: String?,
     val profileImage: String?,
     val scraps: List<String>,
     val likes: List<String>,
