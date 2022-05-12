@@ -216,4 +216,45 @@ internal class UserServiceImplTest {
             assertFalse(result)
         }
     }
+
+    @Nested
+    @DisplayName("회원탈퇴를 할 때,")
+    inner class DeleteUserTest {
+        @Test
+        @DisplayName("성공하면, true를 반환한다.")
+        fun test00() {
+            // given
+            val userEmail = Fixture.userRegisterDto.email
+            val userRegisterInfo = UserRegisterInfo(
+                id = Fixture.userRegisterDto.email,
+                password = "!@#$%"
+            )
+
+            // when
+            Mockito.`when`(userRepository.findByEmail(Mockito.anyString())).thenReturn(Fixture.user)
+            Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.of(userRegisterInfo))
+            Mockito.doNothing().`when`(userRegisterRepository).deleteById(Mockito.anyString())
+            Mockito.doNothing().`when`(userRepository).deleteUserByEmail(Mockito.anyString())
+
+            // then
+            val result = service.deleteUser(userEmail)
+            assertTrue(result)
+        }
+
+        @Test
+        @DisplayName("실패하면, false를 반환한다.")
+        fun test01() {
+            // given
+            val userEmail = Fixture.userRegisterDto.email
+
+            // when
+            Mockito.`when`(userRepository.findByEmail(Mockito.anyString())).thenReturn(null)
+            Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.empty())
+
+            // then
+            val result = service.deleteUser(userEmail)
+            assertFalse(result)
+        }
+    }
+
 }

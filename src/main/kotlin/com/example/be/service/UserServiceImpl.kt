@@ -77,12 +77,18 @@ class UserServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override fun deleteUser(userId: String): Boolean {
-        TODO("Not yet implemented")
+    override fun deleteUser(userEmail: String): Boolean {
+        return if (userRepository.findByEmail(userEmail) != null && userRegisterRepository.findById(userEmail).isPresent) {
+            userRegisterRepository.deleteById(userEmail)
+            userRepository.deleteUserByEmail(userEmail)
+            true
+        } else {
+            false
+        }
     }
 
-    override fun checkDuplicateId(userId: String): Boolean {
-        return userRegisterRepository.findById(userId).isPresent
+    override fun checkDuplicateId(userEmail: String): Boolean {
+        return userRegisterRepository.findById(userEmail).isPresent
     }
 
     private fun checkValid(userRegisterDto: UserRegisterDto): Boolean {

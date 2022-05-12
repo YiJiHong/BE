@@ -10,6 +10,6 @@ interface UserService {
     fun login(userRegisterDto: UserRegisterDto): Boolean
     fun changePassword(userRegisterDto: UserRegisterDto): Boolean
     fun updateUserProfile(updateUserDto: UpdateUserDto): Boolean
-    fun deleteUser(userId: String): Boolean
-    fun checkDuplicateId(userId: String): Boolean
+    fun deleteUser(userEmail: String): Boolean
+    fun checkDuplicateId(userEmail: String): Boolean
 }
