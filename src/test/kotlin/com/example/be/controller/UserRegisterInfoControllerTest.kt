@@ -5,6 +5,7 @@ import com.example.be.SpringMockMvcTestSupport
 import com.example.be.exception.NoneUserException
 import com.example.be.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.nhaarman.mockitokotlin2.any
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -83,15 +84,15 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
             @DisplayName("id, password에 대응되는 user가 있다면, true와 200을 반환한다.")
             fun test00() {
                 // given
-                val inputUri: String = "/user/login"
-                val userId = Fixture.userRegisterDto.email
+                val inputUri = "/user/login"
+                val email = Fixture.userRegisterDto.email
                 val password = Fixture.userRegisterDto.password
 
                 // when
-                Mockito.`when`(userService.login(userId, password)).thenReturn(true)
+                Mockito.`when`(userService.login(any())).thenReturn(true)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
-                        .param("userId", userId)
+                        .param("email", email)
                         .param("password", password)
                 )
 
@@ -111,10 +112,10 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val password = "wrong password"
 
                 // when
-                Mockito.`when`(userService.login(userId, password)).thenReturn(false)
+                Mockito.`when`(userService.login(any())).thenReturn(false)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
-                        .param("userId", userId)
+                        .param("email", userId)
                         .param("password", password)
                 )
 
@@ -193,7 +194,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val updateUserDto = Fixture.updateUserDto
 
                 // when
-                Mockito.`when`(userService.changePassword(updateUserDto)).thenReturn(true)
+                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(true)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.put(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -215,7 +216,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val updateUserDto = Fixture.updateUserDto
 
                 // when
-                Mockito.`when`(userService.changePassword(updateUserDto)).thenReturn(false)
+                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(false)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.put(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)

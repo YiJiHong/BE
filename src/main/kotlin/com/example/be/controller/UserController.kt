@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,8 +28,8 @@ class UserController (val userService: UserService){
     }
 
     @GetMapping("/login")
-    fun login(@RequestParam userId: String, @RequestParam password: String): ResponseEntity<Boolean> {
-        return if (userService.login(userId, password)) {
+    fun login(@ModelAttribute userRegisterDto: UserRegisterDto): ResponseEntity<Boolean> {
+        return if (userService.login(userRegisterDto)) {
             ResponseEntity(true, HttpStatus.OK)
         } else {
             ResponseEntity(false, HttpStatus.NOT_FOUND)
@@ -46,7 +47,7 @@ class UserController (val userService: UserService){
 
     @PutMapping
     fun updateUserProfile(@RequestBody updateUserDto: UpdateUserDto): ResponseEntity<Boolean> {
-        return if (userService.changePassword(updateUserDto)) {
+        return if (userService.updateUserProfile(updateUserDto)) {
             ResponseEntity(true, HttpStatus.OK)
         } else {
             ResponseEntity(false, HttpStatus.INTERNAL_SERVER_ERROR)

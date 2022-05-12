@@ -130,7 +130,7 @@ internal class UserServiceImplTest {
             // when
             Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.of(userRegisterInfo))
             Mockito.`when`(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(true)
-            val result = service.login(userRegisterDto.email, userRegisterDto.password)
+            val result = service.login(userRegisterDto)
 
             // then
             assertTrue(result)
@@ -151,7 +151,7 @@ internal class UserServiceImplTest {
             Mockito.`when`(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(false)
 
             // then
-            val result = service.login(userRegisterDto.email, userRegisterDto.password)
+            val result = service.login(userRegisterDto)
             assertFalse(result)
         }
 
@@ -165,7 +165,7 @@ internal class UserServiceImplTest {
             Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.empty())
 
             // then
-            val result = service.login(userRegisterDto.email, userRegisterDto.password)
+            val result = service.login(userRegisterDto)
             assertFalse(result)
         }
 

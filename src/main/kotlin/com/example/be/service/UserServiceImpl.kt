@@ -49,17 +49,21 @@ class UserServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun login(userId: String, password: String): Boolean {
-        val findById = userRegisterRepository.findById(userId)
+    override fun login(userRegisterDto: UserRegisterDto): Boolean {
+        val findById = userRegisterRepository.findById(userRegisterDto.email)
 
         return if (findById.isPresent) {
-            passwordEncoder.matches(password, findById.get().password)
+            passwordEncoder.matches(userRegisterDto.password, findById.get().password)
         } else {
             false
         }
     }
 
-    override fun changePassword(updateUserDto: UpdateUserDto): Boolean {
+    override fun changePassword(userRegisterDto: UserRegisterDto): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateUserProfile(updateUserDto: UpdateUserDto): Boolean {
         TODO("Not yet implemented")
     }
 
