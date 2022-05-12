@@ -22,6 +22,7 @@ class UserServiceImpl(
     companion object {
         private const val MAX_ID_LENGTH = 15
         private const val MAX_PASSWORD_LENGTH = 20
+        private const val MIN_PASSWORD_LENGTH = 8
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +61,16 @@ class UserServiceImpl(
     }
 
     override fun changePassword(userRegisterDto: UserRegisterDto): Boolean {
-        TODO("Not yet implemented")
+        return if (checkValid(userRegisterDto)) {
+            val user = UserRegisterInfo(
+                id = userRegisterDto.email,
+                password = passwordEncoder.encode(userRegisterDto.password)
+            )
+            userRegisterRepository.save(user)
+            true
+        } else {
+            false
+        }
     }
 
     override fun updateUserProfile(updateUserDto: UpdateUserDto): Boolean {
@@ -79,6 +89,6 @@ class UserServiceImpl(
         val lastIndexOf: Int = userRegisterDto.email.lastIndexOf('@')
         val id = userRegisterDto.email.substring(0, lastIndexOf)
 
-        return id.length <= MAX_ID_LENGTH && userRegisterDto.password.length <= MAX_PASSWORD_LENGTH
+        return id.length <= MAX_ID_LENGTH && (userRegisterDto.password.length in MIN_PASSWORD_LENGTH..MAX_PASSWORD_LENGTH)
     }
 }

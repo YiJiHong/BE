@@ -51,10 +51,10 @@ internal class UserServiceImplTest {
             val user = Fixture.user
 
             // when
-            Mockito.`when`(userRepository.findById(userId)).thenReturn(Optional.of(user))
-            val userDto = service.getUserProfile(userId)
+            Mockito.`when`(userRepository.findById(Mockito.any())).thenReturn(Optional.of(user))
 
             // then
+            val userDto = service.getUserProfile(userId)
             Assertions.assertThat(userDto).usingRecursiveComparison().isEqualTo(user.toDataModel())
         }
 
@@ -65,7 +65,7 @@ internal class UserServiceImplTest {
             val userId = "None"
 
             // when
-            Mockito.`when`(userRepository.findById(userId)).thenReturn(Optional.empty())
+            Mockito.`when`(userRepository.findById(Mockito.anyString())).thenReturn(Optional.empty())
 
             // then
             assertThrows(NoneUserException::class.java) { service.getUserProfile(userId) }
@@ -97,7 +97,8 @@ internal class UserServiceImplTest {
         @ParameterizedTest
         @CsvSource(
             "12345abcdefghijklmnop@naver.com, test123",
-            "test@naver.com, wrongpassword0123456789"
+            "test@naver.com, wrongpassword0123456789",
+            "test@naver.com, 1234567"
         )
         @DisplayName("email혹은 비밀번호의 검증에 실패하면, false를 반환한다.")
         fun test01(inputEmail: String, inputPassword: String) {
@@ -130,9 +131,9 @@ internal class UserServiceImplTest {
             // when
             Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.of(userRegisterInfo))
             Mockito.`when`(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(true)
-            val result = service.login(userRegisterDto)
 
             // then
+            val result = service.login(userRegisterDto)
             assertTrue(result)
         }
 
@@ -168,7 +169,51 @@ internal class UserServiceImplTest {
             val result = service.login(userRegisterDto)
             assertFalse(result)
         }
-
     }
 
+    @Nested
+    @DisplayName("비밀번호 변경을 할 때,")
+    inner class ChangePasswordTest {
+        @Test
+        @DisplayName("성공하면, true를 반환한다.")
+        fun test00() {
+            // given
+            val userRegisterDto = UserRegisterDto(
+                email = Fixture.userRegisterDto.email,
+                password = "asdf12345"
+            )
+            val encodedPassword = "!@#$%^&"
+            val userRegisterInfo = UserRegisterInfo(
+                id = userRegisterDto.email,
+                password = encodedPassword
+            )
+
+            // when
+            Mockito.`when`(passwordEncoder.encode(Mockito.anyString())).thenReturn(encodedPassword)
+            Mockito.`when`(userRegisterRepository.save(any())).thenReturn(userRegisterInfo)
+
+            // then
+            val result = service.changePassword(userRegisterDto)
+            assertTrue(result)
+        }
+
+        @ParameterizedTest
+        @CsvSource(
+            "12345",
+            "asdfg12345asdfb1234567"
+        )
+        @DisplayName("비밀번호의 길이가 8 이상 20 이하가 아니라면, false를 반환한다.")
+        fun test01(inputPassword: String) {
+            // given
+            val userRegisterDto = UserRegisterDto(
+                email = Fixture.userRegisterDto.email,
+                password = inputPassword
+            )
+
+            // when
+            // then
+            val result = service.changePassword(userRegisterDto)
+            assertFalse(result)
+        }
+    }
 }

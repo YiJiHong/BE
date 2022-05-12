@@ -123,7 +123,7 @@ class Fixture {
 
         val userRegisterDto = UserRegisterDto(
             email = "test@naver.com",
-            password = "test123"
+            password = "test12345"
         )
 
         val updateUserDto = UpdateUserDto(
