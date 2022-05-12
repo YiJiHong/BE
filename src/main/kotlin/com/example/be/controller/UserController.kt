@@ -46,7 +46,7 @@ class UserController (val userService: UserService){
 
     @PutMapping
     fun updateUserProfile(@RequestBody updateUserDto: UpdateUserDto): ResponseEntity<Boolean> {
-        return if (userService.updateUserProfile(updateUserDto)) {
+        return if (userService.changePassword(updateUserDto)) {
             ResponseEntity(true, HttpStatus.OK)
         } else {
             ResponseEntity(false, HttpStatus.INTERNAL_SERVER_ERROR)

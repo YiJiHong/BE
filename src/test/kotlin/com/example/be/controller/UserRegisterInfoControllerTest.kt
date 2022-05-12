@@ -5,7 +5,6 @@ import com.example.be.SpringMockMvcTestSupport
 import com.example.be.exception.NoneUserException
 import com.example.be.service.UserService
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -194,7 +193,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val updateUserDto = Fixture.updateUserDto
 
                 // when
-                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(true)
+                Mockito.`when`(userService.changePassword(updateUserDto)).thenReturn(true)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.put(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -216,7 +215,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val updateUserDto = Fixture.updateUserDto
 
                 // when
-                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(false)
+                Mockito.`when`(userService.changePassword(updateUserDto)).thenReturn(false)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.put(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,9 +1,8 @@
 package com.example.be
 
 import com.example.be.dto.*
-import com.example.be.entity.Board
-import com.example.be.entity.Comment
-import com.example.be.entity.Content
+import com.example.be.entity.*
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDateTime
 import java.util.*
 
@@ -106,6 +105,20 @@ class Fixture {
             followers = Collections.singletonList("testId2"),
             followings = Collections.emptyList(),
             tags = Collections.singletonList("여행")
+        )
+
+        val user = User(
+            id = userDto.id,
+            email = userDto.email,
+            name = userDto.name,
+            nickName = userDto.nickName,
+            intro = userDto.intro,
+            profileImage = userDto.profileImage,
+            scraps = userDto.scraps,
+            likes = userDto.likes,
+            followers = userDto.followers,
+            followings = userDto.followings,
+            tags = userDto.tags
         )
 
         val userRegisterDto = UserRegisterDto(
