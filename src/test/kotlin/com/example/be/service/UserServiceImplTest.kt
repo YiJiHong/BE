@@ -180,7 +180,7 @@ internal class UserServiceImplTest {
         }
 
         @Test
-        @DisplayName("id가 틀리면, false를 반환한다.")
+        @DisplayName("id가 db에 존재하지 않으면, NoneUserException를 던진다.")
         fun test02() {
             // given
             val userRegisterDto = Fixture.userRegisterDto
@@ -189,8 +189,10 @@ internal class UserServiceImplTest {
             Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.empty())
 
             // then
-            val result = service.login(userRegisterDto)
-            assertFalse(result)
+            val exception = assertThrows(NoneUserException::class.java) {
+                service.login(userRegisterDto)
+            }
+            println(exception)
         }
     }
 

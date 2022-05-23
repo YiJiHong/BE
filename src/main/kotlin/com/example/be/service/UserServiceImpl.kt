@@ -59,7 +59,7 @@ class UserServiceImpl(
             return if (findById.isPresent) {
                 passwordEncoder.matches(userRegisterDto.password, findById.get().password)
             } else {
-                false
+                throw NoneUserException("No User. id = ${userRegisterDto.email}")
             }
         } else {
             throw NotValidUserRegisterFormException("Not Valid UserRegisterForm : ${userRegisterDto}" ,userRegisterDto)
