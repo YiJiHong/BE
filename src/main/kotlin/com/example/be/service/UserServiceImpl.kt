@@ -5,6 +5,7 @@ import com.example.be.dto.UserDto
 import com.example.be.dto.UserRegisterDto
 import com.example.be.entity.UserRegisterInfo
 import com.example.be.exception.NoneUserException
+import com.example.be.exception.NotValidUserRegisterFormException
 import com.example.be.repository.UserRepository
 import com.example.be.repository.UserRegisterRepository
 import lombok.RequiredArgsConstructor
@@ -21,6 +22,7 @@ class UserServiceImpl(
 
     companion object {
         private const val MAX_ID_LENGTH = 15
+        private const val MIN_ID_LENGTH = 5
         private const val MAX_PASSWORD_LENGTH = 20
         private const val MIN_PASSWORD_LENGTH = 8
     }
@@ -45,12 +47,13 @@ class UserServiceImpl(
             userRegisterRepository.save(userRegisterInfoData)
             true
         } else {
-            false
+            throw NotValidUserRegisterFormException("Not Valid UserRegisterForm : ${userRegisterDto}" ,userRegisterDto)
         }
     }
 
     @Transactional(readOnly = true)
     override fun login(userRegisterDto: UserRegisterDto): Boolean {
+
         val findById = userRegisterRepository.findById(userRegisterDto.email)
 
         return if (findById.isPresent) {
@@ -69,7 +72,7 @@ class UserServiceImpl(
             userRegisterRepository.save(user)
             true
         } else {
-            false
+            throw NotValidUserRegisterFormException("Not Valid UserRegisterForm : ${userRegisterDto}" ,userRegisterDto)
         }
     }
 
@@ -77,10 +80,10 @@ class UserServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override fun deleteUser(userEmail: String): Boolean {
-        return if (userRepository.findByEmail(userEmail) != null && userRegisterRepository.findById(userEmail).isPresent) {
-            userRegisterRepository.deleteById(userEmail)
-            userRepository.deleteUserByEmail(userEmail)
+    override fun deleteUser(userRegisterDto: UserRegisterDto): Boolean {
+        return if (userRepository.findByEmail(userRegisterDto.email) != null && userRegisterRepository.findById(userRegisterDto.email).isPresent) {
+            userRegisterRepository.deleteById(userRegisterDto.email)
+            userRepository.deleteUserByEmail(userRegisterDto.email)
             true
         } else {
             false
@@ -95,6 +98,7 @@ class UserServiceImpl(
         val lastIndexOf: Int = userRegisterDto.email.lastIndexOf('@')
         val id = userRegisterDto.email.substring(0, lastIndexOf)
 
-        return id.length <= MAX_ID_LENGTH && (userRegisterDto.password.length in MIN_PASSWORD_LENGTH..MAX_PASSWORD_LENGTH)
+        return (id.length in MIN_ID_LENGTH .. MAX_ID_LENGTH) &&
+                (userRegisterDto.password.length in MIN_PASSWORD_LENGTH..MAX_PASSWORD_LENGTH)
     }
 }

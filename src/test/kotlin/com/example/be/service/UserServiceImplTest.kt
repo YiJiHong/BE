@@ -18,7 +18,6 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -224,10 +223,10 @@ internal class UserServiceImplTest {
         @DisplayName("성공하면, true를 반환한다.")
         fun test00() {
             // given
-            val userEmail = Fixture.userRegisterDto.email
+            val user = Fixture.userRegisterDto
             val userRegisterInfo = UserRegisterInfo(
-                id = Fixture.userRegisterDto.email,
-                password = "!@#$%"
+                id = user.email,
+                password = user.password
             )
 
             // when
@@ -237,7 +236,7 @@ internal class UserServiceImplTest {
             Mockito.doNothing().`when`(userRepository).deleteUserByEmail(Mockito.anyString())
 
             // then
-            val result = service.deleteUser(userEmail)
+            val result = service.deleteUser(user)
             assertTrue(result)
         }
 
@@ -245,14 +244,14 @@ internal class UserServiceImplTest {
         @DisplayName("실패하면, false를 반환한다.")
         fun test01() {
             // given
-            val userEmail = Fixture.userRegisterDto.email
+            val user = Fixture.userRegisterDto
 
             // when
             Mockito.`when`(userRepository.findByEmail(Mockito.anyString())).thenReturn(null)
             Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.empty())
 
             // then
-            val result = service.deleteUser(userEmail)
+            val result = service.deleteUser(user)
             assertFalse(result)
         }
     }

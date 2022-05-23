@@ -55,8 +55,8 @@ class UserController (val userService: UserService){
     }
 
     @DeleteMapping
-    fun deleteUser(@RequestParam userId: String): ResponseEntity<Boolean> {
-        return if (userService.deleteUser(userId)) {
+    fun deleteUser(@RequestBody userRegisterDto: UserRegisterDto): ResponseEntity<Boolean> {
+        return if (userService.deleteUser(userRegisterDto)) {
             ResponseEntity(true, HttpStatus.OK)
         } else {
             ResponseEntity(false, HttpStatus.INTERNAL_SERVER_ERROR)

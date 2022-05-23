@@ -244,13 +244,14 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
             fun test00() {
                 // given
                 val inputUri: String = "/user"
-                val userId = Fixture.userDto.id
+                val user = Fixture.userRegisterDto
 
                 // when
-                Mockito.`when`(userService.deleteUser(userId)).thenReturn(true)
+                Mockito.`when`(userService.deleteUser(any())).thenReturn(true)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.delete(inputUri)
-                        .param("userId", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(user))
                 )
 
                 // then
@@ -265,13 +266,14 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
             fun test01() {
                 // given
                 val inputUri: String = "/user"
-                val userId = Fixture.userDto.id
+                val user = Fixture.userRegisterDto
 
                 // when
-                Mockito.`when`(userService.deleteUser(userId)).thenReturn(false)
+                Mockito.`when`(userService.deleteUser(any())).thenReturn(false)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.delete(inputUri)
-                        .param("userId", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(user))
                 )
 
                 // then
