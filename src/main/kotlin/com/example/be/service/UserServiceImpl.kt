@@ -21,10 +21,10 @@ class UserServiceImpl(
     val passwordEncoder: PasswordEncoder): UserService {
 
     companion object {
-        private const val MAX_ID_LENGTH = 15
-        private const val MIN_ID_LENGTH = 5
-        private const val MAX_PASSWORD_LENGTH = 20
-        private const val MIN_PASSWORD_LENGTH = 8
+        const val MAX_ID_LENGTH = 15
+        const val MIN_ID_LENGTH = 5
+        const val MAX_PASSWORD_LENGTH = 20
+        const val MIN_PASSWORD_LENGTH = 8
     }
 
     @Transactional(readOnly = true)
@@ -53,13 +53,16 @@ class UserServiceImpl(
 
     @Transactional(readOnly = true)
     override fun login(userRegisterDto: UserRegisterDto): Boolean {
+        if (checkValid(userRegisterDto)) {
+            val findById = userRegisterRepository.findById(userRegisterDto.email)
 
-        val findById = userRegisterRepository.findById(userRegisterDto.email)
-
-        return if (findById.isPresent) {
-            passwordEncoder.matches(userRegisterDto.password, findById.get().password)
+            return if (findById.isPresent) {
+                passwordEncoder.matches(userRegisterDto.password, findById.get().password)
+            } else {
+                false
+            }
         } else {
-            false
+            throw NotValidUserRegisterFormException("Not Valid UserRegisterForm : ${userRegisterDto}" ,userRegisterDto)
         }
     }
 
@@ -81,12 +84,13 @@ class UserServiceImpl(
     }
 
     override fun deleteUser(userRegisterDto: UserRegisterDto): Boolean {
-        return if (userRepository.findByEmail(userRegisterDto.email) != null && userRegisterRepository.findById(userRegisterDto.email).isPresent) {
+        // 회원가입은 했지만 작성한 글이나 댓글은 없을 수 있다.
+        return if (userRegisterRepository.findById(userRegisterDto.email).isPresent) {
             userRegisterRepository.deleteById(userRegisterDto.email)
             userRepository.deleteUserByEmail(userRegisterDto.email)
             true
         } else {
-            false
+            throw NoneUserException("No User. id = ${userRegisterDto.email}")
         }
     }
 

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -241,18 +242,19 @@ internal class UserServiceImplTest {
         }
 
         @Test
-        @DisplayName("실패하면, false를 반환한다.")
-        fun test01() {
+        @DisplayName("DB에 삭제할 id가 존재하지 않으면, NoneUserException를 던진다.")
+        fun test02() {
             // given
             val user = Fixture.userRegisterDto
 
             // when
-            Mockito.`when`(userRepository.findByEmail(Mockito.anyString())).thenReturn(null)
             Mockito.`when`(userRegisterRepository.findById(Mockito.anyString())).thenReturn(Optional.empty())
 
             // then
-            val result = service.deleteUser(user)
-            assertFalse(result)
+            val exception = assertThrows(NoneUserException::class.java) {
+                service.deleteUser(user)
+            }
+            println(exception)
         }
     }
 

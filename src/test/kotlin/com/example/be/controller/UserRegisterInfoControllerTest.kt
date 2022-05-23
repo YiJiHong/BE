@@ -2,13 +2,18 @@ package com.example.be.controller
 
 import com.example.be.Fixture
 import com.example.be.SpringMockMvcTestSupport
+import com.example.be.dto.UserRegisterDto
 import com.example.be.exception.NoneUserException
+import com.example.be.exception.NotValidUserRegisterFormException
 import com.example.be.service.UserService
+import com.example.be.service.UserServiceImpl
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -63,7 +68,8 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val inputId = "None"
 
                 // when
-                Mockito.`when`(userService.getUserProfile(Mockito.anyString())).thenThrow(NoneUserException("No User. id = ${inputId}"))
+                Mockito.`when`(userService.getUserProfile(Mockito.anyString()))
+                    .thenThrow(NoneUserException("No User. id = ${inputId}"))
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
                         .param("userId", inputId)
@@ -122,6 +128,66 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 // then
                 actions
                     .andExpect(MockMvcResultMatchers.status().isNotFound)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+
+            @ParameterizedTest
+            @CsvSource(
+                "test",
+                "wrongwrongwrong1"
+            )
+            @DisplayName("id의 길이가 ${UserServiceImpl.MIN_ID_LENGTH}미만이거나 ${UserServiceImpl.MAX_ID_LENGTH}초과이면, NotValidUserRegisterFormException를 담은 400를 반환한다.")
+            fun test02(inputVal: String) {
+                // given
+                val inputUri = "/user/login"
+                val user = UserRegisterDto(
+                    email = inputVal,
+                    password = "testPassword"
+                )
+
+                // when
+                Mockito.`when`(userService.login(any()))
+                    .thenThrow(NotValidUserRegisterFormException("Not Valid UserRegisterForm : ${user}", user))
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.get(inputUri)
+                        .param("email", user.email)
+                        .param("password", user.password)
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                    .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(MockMvcResultHandlers.print())
+            }
+
+            @ParameterizedTest
+            @CsvSource(
+                "wrong12",
+                "wrongwrongwrongwrong1"
+            )
+            @DisplayName("password의 길이가 ${UserServiceImpl.MIN_PASSWORD_LENGTH}미만이거나 ${UserServiceImpl.MAX_PASSWORD_LENGTH}초과이면, NotValidUserRegisterFormException를 담은 400를 반환한다.")
+            fun test03(inputVal: String) {
+                // given
+                val inputUri = "/user/login"
+                val user = UserRegisterDto(
+                    email = "testId@naver.com",
+                    password = inputVal
+                )
+
+                // when
+                Mockito.`when`(userService.login(any()))
+                    .thenThrow(NotValidUserRegisterFormException("Not Valid UserRegisterForm : ${user}", user))
+                val actions = mockMvc.perform(
+                    MockMvcRequestBuilders.get(inputUri)
+                        .param("email", user.email)
+                        .param("password", user.password)
+                )
+
+                // then
+                actions
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest)
                     .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                     .andDo(MockMvcResultHandlers.print())
             }
@@ -262,14 +328,14 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
             }
 
             @Test
-            @DisplayName("유저 삭제에 실패하면, false와 500를 반환한다.")
+            @DisplayName("DB에 삭제할 id가 존재하지 않으면, 404를 반환한다.")
             fun test01() {
                 // given
                 val inputUri: String = "/user"
                 val user = Fixture.userRegisterDto
 
                 // when
-                Mockito.`when`(userService.deleteUser(any())).thenReturn(false)
+                Mockito.`when`(userService.deleteUser(any())).thenThrow(NoneUserException("No User. id = ${user.email}"))
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.delete(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -278,7 +344,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
 
                 // then
                 actions
-                    .andExpect(MockMvcResultMatchers.status().isInternalServerError)
+                    .andExpect(MockMvcResultMatchers.status().isNotFound)
                     .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                     .andDo(MockMvcResultHandlers.print())
             }

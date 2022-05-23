@@ -1,8 +1,10 @@
 package com.example.be
 
 import com.example.be.dto.*
-import com.example.be.entity.*
-import org.springframework.security.crypto.password.PasswordEncoder
+import com.example.be.entity.Board
+import com.example.be.entity.Comment
+import com.example.be.entity.Content
+import com.example.be.entity.User
 import java.time.LocalDateTime
 import java.util.*
 
@@ -122,7 +124,7 @@ class Fixture {
         )
 
         val userRegisterDto = UserRegisterDto(
-            email = "test@naver.com",
+            email = "test123@naver.com",
             password = "test12345"
         )
 
