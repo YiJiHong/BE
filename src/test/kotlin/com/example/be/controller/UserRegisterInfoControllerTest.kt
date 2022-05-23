@@ -42,7 +42,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val inputId = Fixture.userDto.id
 
                 // when
-                Mockito.`when`(userService.getUserProfile(inputId)).thenReturn(Fixture.userDto)
+                Mockito.`when`(userService.getUserProfile(Mockito.anyString())).thenReturn(Fixture.userDto)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
                         .param("userId", inputId)
@@ -63,7 +63,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val inputId = "None"
 
                 // when
-                Mockito.`when`(userService.getUserProfile(inputId)).thenThrow(NoneUserException("No User. id = ${inputId}"))
+                Mockito.`when`(userService.getUserProfile(Mockito.anyString())).thenThrow(NoneUserException("No User. id = ${inputId}"))
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(inputUri)
                         .param("userId", inputId)
@@ -142,7 +142,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val inputUri: String = "/user"
 
                 // when
-                Mockito.`when`(userService.register(Fixture.userRegisterDto)).thenReturn(true)
+                Mockito.`when`(userService.register(any())).thenReturn(true)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.post(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -163,7 +163,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val inputUri = "/user"
 
                 // when
-                Mockito.`when`(userService.register(Fixture.userRegisterDto)).thenReturn(false)
+                Mockito.`when`(userService.register(any())).thenReturn(false)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.post(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -194,7 +194,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val updateUserDto = Fixture.updateUserDto
 
                 // when
-                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(true)
+                Mockito.`when`(userService.updateUserProfile(any())).thenReturn(true)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.put(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -216,7 +216,7 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
                 val updateUserDto = Fixture.updateUserDto
 
                 // when
-                Mockito.`when`(userService.updateUserProfile(updateUserDto)).thenReturn(false)
+                Mockito.`when`(userService.updateUserProfile(any())).thenReturn(false)
                 val actions = mockMvc.perform(
                     MockMvcRequestBuilders.put(inputUri)
                         .contentType(MediaType.APPLICATION_JSON)
