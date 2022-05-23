@@ -134,8 +134,8 @@ internal class UserRegisterInfoControllerTest : SpringMockMvcTestSupport() {
 
             @ParameterizedTest
             @CsvSource(
-                "test",
-                "wrongwrongwrong1"
+                "test@naver.com",
+                "wrongwrongwrong1@daum.com"
             )
             @DisplayName("id의 길이가 ${UserServiceImpl.MIN_ID_LENGTH}미만이거나 ${UserServiceImpl.MAX_ID_LENGTH}초과이면, NotValidUserRegisterFormException를 담은 400를 반환한다.")
             fun test02(inputVal: String) {

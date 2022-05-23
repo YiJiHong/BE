@@ -4,6 +4,7 @@ import com.example.be.Fixture
 import com.example.be.dto.UserRegisterDto
 import com.example.be.entity.UserRegisterInfo
 import com.example.be.exception.NoneUserException
+import com.example.be.exception.NotValidUserRegisterFormException
 import com.example.be.repository.UserRegisterRepository
 import com.example.be.repository.UserRepository
 import com.nhaarman.mockitokotlin2.any
@@ -96,22 +97,44 @@ internal class UserServiceImplTest {
 
         @ParameterizedTest
         @CsvSource(
-            "12345abcdefghijklmnop@naver.com, test123",
-            "test@naver.com, wrongpassword0123456789",
-            "test@naver.com, 1234567"
+            "test@naver.com",
+            "wrongwrongwrong1@daum.com"
         )
-        @DisplayName("email혹은 비밀번호의 검증에 실패하면, false를 반환한다.")
-        fun test01(inputEmail: String, inputPassword: String) {
+        @DisplayName("id의 길이가 ${UserServiceImpl.MIN_ID_LENGTH}미만이거나 ${UserServiceImpl.MAX_ID_LENGTH}초과이면, NotValidUserRegisterFormException를 던진다.")
+        fun test01(inputEmail: String) {
             // given
             val userRegisterDto = UserRegisterDto(
                 email = inputEmail,
+                password = "inputPassword"
+            )
+
+            // when
+            // then
+            val exception = assertThrows(NotValidUserRegisterFormException::class.java) {
+                service.register(userRegisterDto)
+            }
+            println(exception)
+        }
+
+        @ParameterizedTest
+        @CsvSource(
+            "wrong12",
+            "wrongwrongwrongwrong1"
+        )
+        @DisplayName("password의 길이가 ${UserServiceImpl.MIN_PASSWORD_LENGTH}미만이거나 ${UserServiceImpl.MAX_PASSWORD_LENGTH}초과이면, NotValidUserRegisterFormException를 던진다.")
+        fun test02(inputPassword: String) {
+            // given
+            val userRegisterDto = UserRegisterDto(
+                email = "test123@naver.com",
                 password = inputPassword
             )
 
             // when
             // then
-            val result: Boolean = service.register(userRegisterDto)
-            assertFalse(result)
+            val exception = assertThrows(NotValidUserRegisterFormException::class.java) {
+                service.register(userRegisterDto)
+            }
+            println(exception)
         }
     }
 
@@ -202,7 +225,7 @@ internal class UserServiceImplTest {
             "12345",
             "asdfg12345asdfb1234567"
         )
-        @DisplayName("비밀번호의 길이가 8 이상 20 이하가 아니라면, false를 반환한다.")
+        @DisplayName("비밀번호의 길이가 ${UserServiceImpl.MIN_PASSWORD_LENGTH}미만 ${UserServiceImpl.MAX_PASSWORD_LENGTH}초과라면, NotValidUserRegisterFormException를 던진다.")
         fun test01(inputPassword: String) {
             // given
             val userRegisterDto = UserRegisterDto(
@@ -212,8 +235,10 @@ internal class UserServiceImplTest {
 
             // when
             // then
-            val result = service.changePassword(userRegisterDto)
-            assertFalse(result)
+            val exception = assertThrows(NotValidUserRegisterFormException::class.java) {
+                service.changePassword(userRegisterDto)
+            }
+            println(exception)
         }
     }
 
