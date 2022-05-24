@@ -4,6 +4,7 @@ import com.example.be.dto.*
 import com.example.be.entity.Board
 import com.example.be.entity.Comment
 import com.example.be.entity.Content
+import com.example.be.entity.User
 import java.time.LocalDateTime
 import java.util.*
 
@@ -108,9 +109,23 @@ class Fixture {
             tags = Collections.singletonList("여행")
         )
 
+        val user = User(
+            id = userDto.id,
+            email = userDto.email,
+            name = userDto.name,
+            nickName = userDto.nickName,
+            intro = userDto.intro,
+            profileImage = userDto.profileImage,
+            scraps = userDto.scraps,
+            likes = userDto.likes,
+            followers = userDto.followers,
+            followings = userDto.followings,
+            tags = userDto.tags
+        )
+
         val userRegisterDto = UserRegisterDto(
-            email = "test@naver.com",
-            password = "test123"
+            email = "test123@naver.com",
+            password = "test12345"
         )
 
         val updateUserDto = UpdateUserDto(
