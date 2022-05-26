@@ -38,16 +38,19 @@ class BoardController(val boardService: BoardService) {
         return ResponseEntity(boardService.getBoard(boardId), HttpStatus.OK)
     }
 
+    @Operation(summary = "신규 글 생성")
     @PostMapping
     fun insertBoard(@RequestBody insertBoardDto: InsertBoardDto): ResponseEntity<Boolean> {
         return ResponseEntity(boardService.insertBoard(insertBoardDto), HttpStatus.OK)
     }
 
+    @Operation(summary = "글 수정")
     @PutMapping
     fun updateBoard(@RequestBody updateBoardDto: UpdateBoardDto): ResponseEntity<Boolean> {
         return ResponseEntity(boardService.updateBoard(updateBoardDto), HttpStatus.OK)
     }
 
+    @Operation(summary = "글 삭제")
     @DeleteMapping("/{boardId}")
     fun deleteBoard(@PathVariable boardId: String): ResponseEntity<Boolean> {
         val deleteBoard = boardService.deleteBoard(boardId)
